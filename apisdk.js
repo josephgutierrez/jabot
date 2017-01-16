@@ -17,6 +17,29 @@ cont.startRTM()
 
 const messages = ['direct_message','direct_mention','mention']
 
+function slackResponse(message) {
+
+  const request = app.textRequest(message, {
+    sessionId: '3849666a-cb81-4fbd-84a0-365210c5ff0d'
+  })
+
+  request.on('response', (response) => {
+    console.log(response.result.fulfillment.speech)
+  })
+
+  request.on('error', (error) => {
+    console.log(error)
+  })
+
+  request.end()
+}
+
+controller.on('direct_message', (bot, message) => {
+  slackResponse(message["text"])
+})
+
+
+
 // controller.hears(['hello', 'hey', 'hi'], messages, (bot,message) => {
 //   bot.reply(message,'Hi!')
 // });
@@ -30,27 +53,6 @@ const messages = ['direct_message','direct_mention','mention']
 // })
 //
 //
-
-const results = controller.on('direct_message', (bot, message) => {
-  console.log(message["text"])
-})
-
-const request = app.textRequest('hello', {
-  sessionId: '3849666a-cb81-4fbd-84a0-365210c5ff0d'
-})
-
-request.on('response', (response) => {
-  console.log(response)
-})
-
-request.on('error', (error) => {
-  console.log(error)
-})
-
-request.end()
-
-
-
 
 // { id: '895e27fc-50b7-4e98-88d0-4488e10c454c',
 //   timestamp: '2017-01-12T22:02:48.035Z',
