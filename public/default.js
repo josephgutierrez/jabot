@@ -1,4 +1,7 @@
-const Botkit = require('botkit');
+const Botkit = require('botkit')
+const apiai = require('apiai')
+
+const app = apiai('5dd6932f52584e5080adb53937199db7')
 
 const slackToken = 'xoxb-126272216194-gnngUv5WUWooYNJzuCmJWjex'
 
@@ -14,14 +17,40 @@ cont.startRTM()
 
 const messages = ['direct_message','direct_mention','mention']
 
-controller.hears(['hello', 'hey', 'hi'], messages, (bot,message) => {
-  bot.reply(message,'Hi!')
-});
+function slackResponse($message, message, bot) {
 
-controller.hears(['bye', 'goodbye', 'later'], messages, (bot,message) => {
-  bot.reply(message, 'See you later!')
+  const request = app.textRequest($message, {
+    sessionId: '3849666a-cb81-4fbd-84a0-365210c5ff0d'
+  })
+
+  request.on('response', (response) => {
+    if (response.result.action === "getWeather") {
+      const city = response.result.parameters.city.split(' ').join('').toLowerCase()
+      console.log(city)
+    }else if (response.result.action === "getNews") {
+      const keyword = response.result.parameters.keyword
+      console.log(keyword)
+      }
+
+    // var results = response.result.fulfillment.speech
+    // bot.reply(message, results)
+  })
+
+  request.on('error', (error) => {
+    console.log(error)
+  })
+
+  request.end()
+}
+
+controller.on(messages, (bot, message) => {
+  slackResponse(message.text, message, bot)
 })
 
-controller.hears('trump', messages, (bot, message) => {
-  bot.reply(message, 'My builder said if I don\'t have anything nice to say, don\'t say anything at all.')
-})
+
+
+// openweather address for weather by city
+// http://api.openweathermap.org/data/2.5/weather?q=sacramento&appid=1279419e8e4979829e620ff92fb84c86
+
+// openweather object:
+// {"coord":{"lon":-121.49,"lat":38.58},"weather":[{"id":801,"main":"Clouds","description":"few clouds","icon":"02d"}],"base":"stations","main":{"temp":281.78,"pressure":1022,"humidity":66,"temp_min":278.15,"temp_max":284.15},"visibility":16093,"wind":{"speed":1.5},"clouds":{"all":20},"dt":1484600280,"sys":{"type":1,"id":464,"message":0.2117,"country":"US","sunrise":1484580078,"sunset":1484615483},"id":5389489,"name":"Sacramento","cod":200}

@@ -22,7 +22,8 @@
     "api-ai-botkit": "^1.0.3",
     "botkit": "^0.4.9",
     "botkit-middleware-apiai": "^0.1.1",
-    "express": "^4.14.0"
+    "express": "^4.14.0",
+    "request": "^2.79.0"
   },
   "devDependencies": {
     "nodemon": "^1.11.0"

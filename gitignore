@@ -1,2 +1,3 @@
 const twilioApi = "ACd72d61f1fa7ad7cd1eaf6e21d3bcee0b"
 const newsApi = "beb252b1d593443aa1ebec2d8aaab7e5"
+const openWeatherApi = "1279419e8e4979829e620ff92fb84c86"

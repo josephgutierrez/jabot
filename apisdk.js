@@ -17,14 +17,23 @@ cont.startRTM()
 
 const messages = ['direct_message','direct_mention','mention']
 
-function slackResponse(message) {
+function slackResponse($message, message, bot) {
 
-  const request = app.textRequest(message, {
+  const request = app.textRequest($message, {
     sessionId: '3849666a-cb81-4fbd-84a0-365210c5ff0d'
   })
 
   request.on('response', (response) => {
-    console.log(response.result.fulfillment.speech)
+    if (response.result.action === "getWeather") {
+      const city = response.result.parameters.city.split(' ').join('').toLowerCase()
+      console.log(city)
+    }else if (response.result.action === "getNews") {
+      const keyword = response.result.parameters.keyword
+      console.log(keyword)
+      }
+
+    // var results = response.result.fulfillment.speech
+    // bot.reply(message, results)
   })
 
   request.on('error', (error) => {
@@ -34,45 +43,14 @@ function slackResponse(message) {
   request.end()
 }
 
-controller.on('direct_message', (bot, message) => {
-  slackResponse(message["text"])
+controller.on(messages, (bot, message) => {
+  slackResponse(message.text, message, bot)
 })
 
 
 
-// controller.hears(['hello', 'hey', 'hi'], messages, (bot,message) => {
-//   bot.reply(message,'Hi!')
-// });
-//
-// controller.hears(['bye', 'goodbye', 'later'], messages, (bot,message) => {
-//   bot.reply(message, 'See you later!')
-// })
-//
-// controller.hears('trump', messages, (bot, message) => {
-//   bot.reply(message, 'My builder said if I don\'t have anything nice to say, don\'t say anything at all.')
-// })
-//
-//
+// openweather address for weather by city
+// http://api.openweathermap.org/data/2.5/weather?q=sacramento&appid=1279419e8e4979829e620ff92fb84c86
 
-// { id: '895e27fc-50b7-4e98-88d0-4488e10c454c',
-//   timestamp: '2017-01-12T22:02:48.035Z',
-//   result:
-//    { source: 'agent',
-//      resolvedQuery: 'will it snow tomorrow in san francisco?',
-//      action: '',
-//      actionIncomplete: false,
-//      parameters:
-//       { city: 'San Francisco',
-//         date: '2017-01-13',
-//         forecast: 'snow',
-//         'geo-city': '' },
-//      contexts: [],
-//      metadata:
-//       { intentId: 'e3301e8b-3f58-4f21-97fc-251f76db69f9',
-//         webhookUsed: 'false',
-//         webhookForSlotFillingUsed: 'false',
-//         intentName: 'GetWeather' },
-//      fulfillment: { speech: 'It will be', messages: [Object] },
-//      score: 1 },
-//   status: { code: 200, errorType: 'success' },
-//   sessionId: '3849666a-cb81-4fbd-84a0-365210c5ff0d' }
+// openweather object:
+// {"coord":{"lon":-121.49,"lat":38.58},"weather":[{"id":801,"main":"Clouds","description":"few clouds","icon":"02d"}],"base":"stations","main":{"temp":281.78,"pressure":1022,"humidity":66,"temp_min":278.15,"temp_max":284.15},"visibility":16093,"wind":{"speed":1.5},"clouds":{"all":20},"dt":1484600280,"sys":{"type":1,"id":464,"message":0.2117,"country":"US","sunrise":1484580078,"sunset":1484615483},"id":5389489,"name":"Sacramento","cod":200}
