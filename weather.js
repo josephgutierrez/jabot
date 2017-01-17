@@ -31,9 +31,16 @@ function slackResponse($message, message, bot) {
     if (response.result.action === "getWeather") {
       const city = response.result.parameters.city.split(' ').join('').toLowerCase()
       console.log(city)
-      $request.get(`http://api.openweathermap.org/data/2.5/weather?q=${city}&units=imperial&appid=1279419e8e4979829e620ff92fb84c86`, (req, res, body) => {
-        console.log(body)
-      })
+      if (!city) {
+        bot.reply(message, response.result.fulfillment.speech)
+      } else {
+        $request.get(`http://api.openweathermap.org/data/2.5/weather?q=${city}&units=imperial&appid=1279419e8e4979829e620ff92fb84c86`, (req, res, body) => {
+          console.log(body)
+          // console.log(body.weather[0].id)
+        })
+      }
+
+
     } else if (response.result.action === "getNews") {
         const keyword = response.result.parameters.keyword
         console.log(keyword)
@@ -56,9 +63,44 @@ controller.on(messages, (bot, message) => {
 $app.listen(3000)
 
 
+// const temperature = body.weather.main.temp
+// const humidity = body.weather.main.humidity
+// const conditions = body.weather[0].id
 
 // openweather address for weather by city
 // http://api.openweathermap.org/data/2.5/weather?q=sacramento&appid=1279419e8e4979829e620ff92fb84c86
 
 // openweather object:
-// {"coord":{"lon":-121.49,"lat":38.58},"weather":[{"id":801,"main":"Clouds","description":"few clouds","icon":"02d"}],"base":"stations","main":{"temp":281.78,"pressure":1022,"humidity":66,"temp_min":278.15,"temp_max":284.15},"visibility":16093,"wind":{"speed":1.5},"clouds":{"all":20},"dt":1484600280,"sys":{"type":1,"id":464,"message":0.2117,"country":"US","sunrise":1484580078,"sunset":1484615483},"id":5389489,"name":"Sacramento","cod":200}
+// {
+// "coord":{
+//   "lon":-118.24,
+//   "lat":34.05},
+// "weather":[
+//   {
+//     "id":721,
+//     "main":"Haze",
+//     "description":"haze",
+//     "icon":"50d"}],
+//   "base":"stations",
+//   "main":{
+//     "temp":53.15,
+//     "pressure":1020,
+//     "humidity":58,
+//     "temp_min":46.4,
+//     "temp_max":55.4},
+//     "visibility":16093,
+//     "wind":{
+//       "speed":4.7,
+//       "deg":110},
+//       "clouds":{"all":1},
+//       "dt":1484672280,
+//       "sys":{
+//         "type":1,
+//         "id":396,
+//         "message":0.2114,
+//         "country":"US",
+//         "sunrise":1484665045,
+//         "sunset":1484701787},
+//         "id":5368361,
+//         "name":"Los Angeles",
+//         "cod":200}
