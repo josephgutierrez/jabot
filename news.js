@@ -44,11 +44,31 @@ function slackResponse($message, message, bot) {
               url: 'https://api.nytimes.com/svc/search/v2/articlesearch.json',
               qs: {
                 'api-key': '68892a116d9e4c3ebd8429e3ce9c196f',
-                'fq': keyword
+                'q': keyword
               },
-            },function(err, response, body) {
-              body = JSON.parse(body)
-              console.log(body)
+            },function(err, res, body) {
+                body = JSON.parse(body)
+                const headline = body.response.docs[0].headline.main
+                const linkUrl = body.response.docs[0].web_url
+                const author = body.response.docs[0].byline.original
+                const webImage = "www.nytimes.com/" + body.response.docs[0].multimedia[0].url
+                const snippet = body.response.docs[0].snippet
+
+                const newsReply = {
+                  "text": response.result.fulfillment.speech,
+                  "attachments": [
+                    {
+                        "title": headline,
+                	      "title_link": linkUrl,
+                        "author_name": author,
+                        "image_url": webImage
+                    },
+                    {
+                        "text": snippet
+                    }
+                  ]
+                }
+                bot.reply(message, newsReply)
             })
           }
     } else {
