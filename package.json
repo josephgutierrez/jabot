@@ -20,7 +20,6 @@
   "homepage": "https://github.com/josephgutierrez/jabot#readme",
   "dependencies": {
     "api-ai-botkit": "^1.0.3",
-    "body-parser": "^1.15.2",
     "botkit": "^0.4.9",
     "express": "^4.14.0",
     "request": "^2.79.0"

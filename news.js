@@ -1,14 +1,9 @@
 const apiai = require('apiai')
-const bodyParser = require('body-parser')
 const Botkit = require('botkit')
 const express = require('express')
 const $request = require('request')
 
 const $app = express()
-
-const jsonParser = bodyParser.json()
-
-$app.use(jsonParser)
 
 const app = apiai('5dd6932f52584e5080adb53937199db7')
 
@@ -51,7 +46,7 @@ function slackResponse($message, message, bot) {
                 const headline = body.response.docs[0].headline.main
                 const linkUrl = body.response.docs[0].web_url
                 const author = body.response.docs[0].byline.original
-                const webImage = "www.nytimes.com/" + body.response.docs[0].multimedia[0].url
+                const webImage = "http://www.nytimes.com/" + body.response.docs[0].multimedia[1].url
                 const snippet = body.response.docs[0].snippet
 
                 const newsReply = {
