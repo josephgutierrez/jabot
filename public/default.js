@@ -5,12 +5,14 @@ const $request = require('request')
 
 const $app = express()
 
-const app = apiai('5dd6932f52584e5080adb53937199db7')
+const PORT = process.env.PORT
 
-const slackToken = 'xoxb-126272216194-gnngUv5WUWooYNJzuCmJWjex'
+const app = apiai(process.env.APIAI_API)
+
+const slackToken = process.env.SLACK_API
 
 const controller = Botkit.slackbot({
-  debug: true
+  debug: false
 });
 
 const cont = controller.spawn({
@@ -24,7 +26,7 @@ const messages = ['direct_message','direct_mention','mention']
 function slackResponse($message, message, bot) {
 
   const request = app.textRequest($message, {
-    sessionId: '3849666a-cb81-4fbd-84a0-365210c5ff0d'
+    sessionId: process.env.SESSION_ID
   })
 
   request.on('response', (response) => {
@@ -36,22 +38,23 @@ function slackResponse($message, message, bot) {
         $request.get({
           url: 'https://api.nytimes.com/svc/search/v2/articlesearch.json',
           qs: {
-            'api-key': '68892a116d9e4c3ebd8429e3ce9c196f',
-            'q': keyword
+            'api-key': process.env.NYT_API,
+            'q': keyword,
+            'sort': "newest"
           },
         },function(err, res, body) {
           body = JSON.parse(body)
 
-          var attachments = []
+          const attachments = []
 
-          for (var i = 0; i < 3; i++) {
+          for (let i = 0; i < 3; i++) {
             const headline = body.response.docs[i].headline.main || "Headline not available"
             const linkUrl = body.response.docs[i].web_url || "https://www.nytimes.com"
             const author = body.response.docs[i].byline ? body.response.docs[i].byline.original : "By THE NEW YORK TIMES"
-            const webImage = body.response.docs[i].multimedia[i] ? `http://www.nytimes.com/${body.response.docs[i].multimedia[1].url}` : "no image"
+            const webImage = body.response.docs[i].multimedia[i] ? `http://www.nytimes.com/${body.response.docs[i].multimedia[1].url}` : "https://upload.wikimedia.org/wikipedia/commons/thumb/4/40/New_York_Times_logo_variation.jpg/300px-New_York_Times_logo_variation.jpg"
             const snippet = body.response.docs[i].snippet
 
-            var article = {
+            const article = {
               "title": headline,
               "title_link": linkUrl,
               "author_name": author,
@@ -87,4 +90,4 @@ controller.on(messages, (bot, message) => {
   slackResponse(message.text, message, bot)
 })
 
-$app.listen(3000)
+$app.listen(PORT)

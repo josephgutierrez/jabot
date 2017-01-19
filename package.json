@@ -5,8 +5,8 @@
   "main": "public",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node public/default.js",
-    "watch": "nodemon default.js"
+    "start": "PORT=3000 node public/default.js",
+    "watch": "PORT=3000 nodemon public/default.js"
   },
   "repository": {
     "type": "git",
