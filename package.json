@@ -2,10 +2,11 @@
   "name": "jabot",
   "version": "1.0.0",
   "description": "",
-  "main": "default.js",
+  "main": "public",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "watch": "nodemon public/default.js"
+    "start": "node public/default.js",
+    "watch": "nodemon default.js"
   },
   "repository": {
     "type": "git",

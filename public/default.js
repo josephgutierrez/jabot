@@ -1,5 +1,9 @@
-const Botkit = require('botkit')
 const apiai = require('apiai')
+const Botkit = require('botkit')
+const express = require('express')
+const $request = require('request')
+
+const $app = express()
 
 const app = apiai('5dd6932f52584e5080adb53937199db7')
 
@@ -24,16 +28,52 @@ function slackResponse($message, message, bot) {
   })
 
   request.on('response', (response) => {
-    if (response.result.action === "getWeather") {
-      const city = response.result.parameters.city.split(' ').join('').toLowerCase()
-      console.log(city)
-    }else if (response.result.action === "getNews") {
-      const keyword = response.result.parameters.keyword
-      console.log(keyword)
-      }
 
-    // var results = response.result.fulfillment.speech
-    // bot.reply(message, results)
+    if (response.result.action === "getNews") {
+      if (response.result.parameters.keyword) {
+        const keyword = response.result.parameters.keyword.split(' ').join(';').toLowerCase()
+
+        $request.get({
+          url: 'https://api.nytimes.com/svc/search/v2/articlesearch.json',
+          qs: {
+            'api-key': '68892a116d9e4c3ebd8429e3ce9c196f',
+            'q': keyword
+          },
+        },function(err, res, body) {
+          body = JSON.parse(body)
+
+          var attachments = []
+
+          for (var i = 0; i < 3; i++) {
+            const headline = body.response.docs[i].headline.main || "Headline not available"
+            const linkUrl = body.response.docs[i].web_url || "https://www.nytimes.com"
+            const author = body.response.docs[i].byline.original || "By THE NEW YORK TIMES"
+            const webImage = `http://www.nytimes.com/${body.response.docs[i].multimedia[1].url}`
+            const snippet = body.response.docs[i].snippet
+
+            var article = {
+              "title": headline,
+              "title_link": linkUrl,
+              "author_name": author,
+              "image_url": webImage,
+              "text": snippet
+            }
+
+            attachments.push(articles)
+          }
+
+          const newsReply = {
+            "text": response.result.fulfillment.speech,
+            "attachments": attachments
+          }
+          bot.reply(message, newsReply)
+        })
+      } else {
+        bot.reply(message, response.result.fulfillment.speech)
+      }
+    } else {
+      bot.reply(message, response.result.fulfillment.speech)
+    }
   })
 
   request.on('error', (error) => {
@@ -47,10 +87,4 @@ controller.on(messages, (bot, message) => {
   slackResponse(message.text, message, bot)
 })
 
-
-
-// openweather address for weather by city
-// http://api.openweathermap.org/data/2.5/weather?q=sacramento&appid=1279419e8e4979829e620ff92fb84c86
-
-// openweather object:
-// {"coord":{"lon":-121.49,"lat":38.58},"weather":[{"id":801,"main":"Clouds","description":"few clouds","icon":"02d"}],"base":"stations","main":{"temp":281.78,"pressure":1022,"humidity":66,"temp_min":278.15,"temp_max":284.15},"visibility":16093,"wind":{"speed":1.5},"clouds":{"all":20},"dt":1484600280,"sys":{"type":1,"id":464,"message":0.2117,"country":"US","sunrise":1484580078,"sunset":1484615483},"id":5389489,"name":"Sacramento","cod":200}
+$app.listen(3000)
