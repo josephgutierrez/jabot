@@ -47,8 +47,8 @@ function slackResponse($message, message, bot) {
           for (var i = 0; i < 3; i++) {
             const headline = body.response.docs[i].headline.main || "Headline not available"
             const linkUrl = body.response.docs[i].web_url || "https://www.nytimes.com"
-            const author = body.response.docs[i].byline.original || "By THE NEW YORK TIMES"
-            const webImage = `http://www.nytimes.com/${body.response.docs[i].multimedia[1].url}`
+            const author = body.response.docs[i].byline ? body.response.docs[i].byline.original : "By THE NEW YORK TIMES"
+            const webImage = body.response.docs[i].multimedia[i] ? `http://www.nytimes.com/${body.response.docs[i].multimedia[1].url}` : "no image"
             const snippet = body.response.docs[i].snippet
 
             var article = {
@@ -59,7 +59,7 @@ function slackResponse($message, message, bot) {
               "text": snippet
             }
 
-            attachments.push(articles)
+            attachments.push(article)
           }
 
           const newsReply = {
