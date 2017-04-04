@@ -1,5 +1,5 @@
 # Jabot
-This chatbot can fetch the news and will have more features to come. 
+This chatbot can fetch the news. 
 
 ![](http://g.recordit.co/omq1ogJdYI.gif)
 
