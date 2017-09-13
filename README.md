@@ -10,4 +10,3 @@ This chatbot can fetch the news.
 - NYTimes API
 - RESTful API
 
-Needs to be re-deployed
